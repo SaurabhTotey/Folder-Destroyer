@@ -5,18 +5,18 @@ if [ $# -lt 3 ]; then
 fi
 
 if [ "$1" == "" ]; then
-	echo "Must pass in a path for a folder to destroy.";
-	exit 1;
+	echo "Must pass in a path for a folder to destroy."
+	exit 1
 fi
 
 if [ "$2" == "" ]; then #TODO: check that $2 is an int
-	echo "Must pass in how many folders the seeker must look through per layer.";
-	exit 1;
+	echo "Must pass in how many folders the seeker must look through per layer."
+	exit 1
 fi
 
 if [ "$3" == "" ]; then #TODO: check that $3 is an int
-	echo "Must pass in a depth for how many folders or layers deep the destroyed folder will be.";
-	exit 1;
+	echo "Must pass in a depth for how many folders or layers deep the destroyed folder will be."
+	exit 1
 fi
 
 # Parameters are 1: depth remaining, 2: number of options per layer, 3: folder to go inside of and destroy
@@ -29,7 +29,10 @@ createRandomOptions() {
 	do
 		eval "mkdir $(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 16)"
 	done
-	#TODO: call createRandomOptions for all of the created folders and decrement $1 which is the depth remaining
+	shopt -s nullglob
+	for directory in $(*/); do
+		createRandomOptions $(($1 - 1)) $2 "$directory"
+	done
 	eval "cd .."
 }
 
