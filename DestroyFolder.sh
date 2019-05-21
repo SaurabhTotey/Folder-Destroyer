@@ -19,16 +19,31 @@ if [ "$3" == "" ]; then #TODO: check that $3 is an int
 	exit 1;
 fi
 
-#TODO: below only generates folders for a single path
+# Parameters are 1: depth remaining, 2: number of options per layer, 3: folder to go inside of and destroy
+createRandomOptions() {
+	if [ $(($1)) -le 0 ]; then
+		return 0
+	fi
+	eval "cd $3"
+	while [ $(ls -1 | wc -l) -lt $(($2)) ]
+	do
+		eval "mkdir $(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 16)"
+	done
+	#TODO: call createRandomOptions for all of the created folders and decrement $1 which is the depth remaining
+	eval "cd .."
+}
+
 eval "mkdir DestroyedFolder"
+createRandomOptions $3 $2 "DestroyedFolder"
+
 eval "cd DestroyedFolder"
 for i in {1 .. $(($3))}
 do
-	while [ $(ls -1 | wc -l) -lt $(($2)) ]
-	do
-		eval "mkdir $(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 32)"
-	done
 	eval "shopt -s nullglob"
 	dirs=(*/)
 	[[ $dirs ]] && cd -- "${dirs[RANDOM%${#dirs[@]}]}"
 done
+
+#TODO: move folder to destroy to current location
+
+#TODO: compress DestroyedFolder
