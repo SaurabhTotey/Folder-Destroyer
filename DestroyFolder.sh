@@ -19,19 +19,23 @@ if [ "$3" == "" ]; then #TODO: check that $3 is an int
 	exit 1
 fi
 
-# Parameters are 1: depth remaining, 2: number of options per layer, 3: folder to go inside of and destroy
+# Parameters are 1: depth remaining, 2: number of options per layer, 3: folder to go inside of and add options
 createRandomOptions() {
 	if [ $(($1)) -le 0 ]; then
 		return 0
 	fi
 	eval "cd $3"
+	directories=()
 	while [ $(ls -1 | wc -l) -lt $(($2)) ]
 	do
-		eval "mkdir $(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 16)"
+		newDirectory=$(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 16)
+		eval "mkdir $newDirectory"
+		directories+=( $newDirectory )
+		echo "$newDirectory"
 	done
 	shopt -s nullglob
-	for directory in $(*/); do
-		createRandomOptions $(($1 - 1)) $2 "$directory"
+	for directory in ${directories[@]}; do
+		$(createRandomOptions $(($1 - 1)) "$2" "$directory")
 	done
 	eval "cd .."
 }
