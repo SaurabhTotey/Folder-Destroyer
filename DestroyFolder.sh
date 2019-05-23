@@ -9,12 +9,12 @@ if [ "$1" == "" ]; then
 	exit 1
 fi
 
-if [ "$2" == "" ]; then #TODO: check that $2 is an int
+if [[ "$2" == "" || $(($2)) != $2 ]]; then
 	echo "Must pass in how many folders the seeker must look through per layer."
 	exit 1
 fi
 
-if [ "$3" == "" ]; then #TODO: check that $3 is an int
+if [[ "$3" == "" || $(($3)) != $3 ]]; then
 	echo "Must pass in a depth for how many folders or layers deep the destroyed folder will be."
 	exit 1
 fi
