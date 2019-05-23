@@ -31,11 +31,10 @@ createRandomOptions() {
 		newDirectory=$(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 16)
 		eval "mkdir $newDirectory"
 		directories+=( $newDirectory )
-		echo "$newDirectory"
 	done
 	shopt -s nullglob
 	for directory in ${directories[@]}; do
-		$(createRandomOptions $(($1 - 1)) "$2" "$directory")
+		createRandomOptions $(($1 - 1)) $2 $directory
 	done
 	eval "cd .."
 }
