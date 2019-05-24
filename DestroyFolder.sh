@@ -32,7 +32,6 @@ createRandomOptions() {
 		eval "mkdir $newDirectory"
 		directories+=( $newDirectory )
 	done
-	shopt -s nullglob
 	for directory in ${directories[@]}; do
 		createRandomOptions $(($1 - 1)) $2 $directory
 	done
@@ -43,13 +42,17 @@ eval "mkdir DestroyedFolder"
 createRandomOptions $3 $2 "DestroyedFolder"
 
 eval "cd DestroyedFolder"
-for i in {1 .. $(($3))}
-do
-	eval "shopt -s nullglob"
+for ((i=1; i <= $3; i++)); do
 	dirs=(*/)
 	[[ $dirs ]] && cd -- "${dirs[RANDOM%${#dirs[@]}]}"
 done
+pathToHideDestroyedFolder=$(pwd)
+for ((i=1; i <= $3; i++)); do
+	eval "cd .."
+done
 
-#TODO: move folder to destroy to current location
+echo "$pathToHideDestroyedFolder"
+
+#TODO: move folder to destroy to pathToHideDestroyedFolder
 
 #TODO: compress DestroyedFolder
