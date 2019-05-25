@@ -52,8 +52,9 @@ done
 
 eval "mv $1 $pathToHideDestroyedFolder"
 
-readmeLocation="DestroyedFolder/README.txt"
+readmeLocation="./DestroyedFolder/README.txt"
 eval "touch $readmeLocation"
 echo -e "Hello dear victim.\nYou have become the target of a folder destruction attack. Your original folder has been hidden inside this maze of randomly named folders.\nEach folder will lead to another layer of folders with $2 options of folders, each of which lead to another layer with another $2 options of folders. This is repeated for a total of $3 layers.\nYour original folder is hidden past the last layer of one random path of these folders.\nGood luck, comrade." > "$readmeLocation"
 
-#TODO: compress DestroyedFolder
+eval "tar -czf DestroyedFolder.tar.gz ./DestroyedFolder"
+eval "rm -rf ./DestroyedFolder"
