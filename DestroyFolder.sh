@@ -26,8 +26,7 @@ createRandomOptions() {
 	fi
 	eval "cd $3"
 	directories=()
-	while [ $(ls -1 | wc -l) -lt $(($2)) ]
-	do
+	while [ $(ls -1 | wc -l) -lt $(($2)) ]; do
 		newDirectory=$(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 16)
 		eval "mkdir $newDirectory"
 		directories+=( $newDirectory )
@@ -42,17 +41,15 @@ eval "mkdir DestroyedFolder"
 createRandomOptions $3 $2 "DestroyedFolder"
 
 eval "cd DestroyedFolder"
-for ((i=1; i <= $3; i++)); do
+for ((i=0; i < $3; i++)); do
 	dirs=(*/)
 	[[ $dirs ]] && cd -- "${dirs[RANDOM%${#dirs[@]}]}"
 done
 pathToHideDestroyedFolder=$(pwd)
-for ((i=1; i <= $3; i++)); do
+for ((i=0; i <= $3; i++)); do
 	eval "cd .."
 done
 
-echo "$pathToHideDestroyedFolder"
-
-#TODO: move folder to destroy to pathToHideDestroyedFolder
+eval "mv $1 $pathToHideDestroyedFolder"
 
 #TODO: compress DestroyedFolder
