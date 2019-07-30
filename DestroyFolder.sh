@@ -24,37 +24,37 @@ createRandomOptions() {
 	if [ $(($1)) -le 0 ]; then
 		return 0
 	fi
-	eval "cd $3"
+	cd "$3" || exit
 	directories=()
 	while [ "$(find . -maxdepth 1 | wc -l)" -lt $(($2)) ]; do
 		newDirectory=$(env LC_CTYPE=C tr -cd 'a-f0-9' < /dev/urandom | head -c 16)
-		eval "mkdir $newDirectory"
+		mkdir "$newDirectory"
 		directories+=( "$newDirectory" )
 	done
 	for directory in "${directories[@]}"; do
 		createRandomOptions $(($1 - 1)) "$2" "$directory"
 	done
-	eval "cd .."
+	cd ..
 }
 
-eval "mkdir DestroyedFolder"
+mkdir DestroyedFolder
 createRandomOptions "$3" "$2" "DestroyedFolder"
 
-eval "cd DestroyedFolder"
+cd DestroyedFolder || exit
 for ((i=0; i < $3; i++)); do
 	dirs=(*/)
 	cd -- "${dirs[RANDOM%${#dirs[@]}]}" || exit
 done
 pathToHideDestroyedFolder=$(pwd)
 for ((i=0; i <= $3; i++)); do
-	eval "cd .."
+	cd ..
 done
 
-eval "mv $1 $pathToHideDestroyedFolder"
+mv "$1" "$pathToHideDestroyedFolder"
 
 readmeLocation="./DestroyedFolder/README.txt"
-eval "touch $readmeLocation"
+touch $readmeLocation
 echo -e "Hello dear victim.\nYou have become the target of a folder destruction attack. Your original folder has been hidden inside this maze of randomly named folders.\nEach folder will lead to another layer of folders with $2 options of folders, each of which lead to another layer with another $2 options of folders. This is repeated for a total of $3 layers.\nYour original folder is hidden past the last layer of one random path of these folders.\nGood luck, comrade." > "$readmeLocation"
 
-eval "tar -czf DestroyedFolder.tar.gz ./DestroyedFolder"
-eval "rm -rf ./DestroyedFolder"
+tar -czf DestroyedFolder.tar.gz ./DestroyedFolder
+rm -rf ./DestroyedFolder
