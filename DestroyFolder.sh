@@ -9,12 +9,12 @@ if [ "$1" == "" ]; then
 	exit 1
 fi
 
-if [[ "$2" == "" || $(($2)) != $2 ]]; then
+if [[ "$2" == "" || $(($2)) != "$2" ]]; then
 	echo "Must pass in how many folders the seeker must look through per layer."
 	exit 1
 fi
 
-if [[ "$3" == "" || $(($3)) != $3 ]]; then
+if [[ "$3" == "" || $(($3)) != "$3" ]]; then
 	echo "Must pass in a depth for how many folders or layers deep the destroyed folder will be."
 	exit 1
 fi
@@ -26,24 +26,24 @@ createRandomOptions() {
 	fi
 	eval "cd $3"
 	directories=()
-	while [ $(ls -1 | wc -l) -lt $(($2)) ]; do
-		newDirectory=$(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 16)
+	while [ "$(find . -maxdepth 1 | wc -l)" -lt $(($2)) ]; do
+		newDirectory=$(env LC_CTYPE=C tr -cd 'a-f0-9' < /dev/urandom | head -c 16)
 		eval "mkdir $newDirectory"
-		directories+=( $newDirectory )
+		directories+=( "$newDirectory" )
 	done
-	for directory in ${directories[@]}; do
-		createRandomOptions $(($1 - 1)) $2 $directory
+	for directory in "${directories[@]}"; do
+		createRandomOptions $(($1 - 1)) "$2" "$directory"
 	done
 	eval "cd .."
 }
 
 eval "mkdir DestroyedFolder"
-createRandomOptions $3 $2 "DestroyedFolder"
+createRandomOptions "$3" "$2" "DestroyedFolder"
 
 eval "cd DestroyedFolder"
 for ((i=0; i < $3; i++)); do
 	dirs=(*/)
-	[[ $dirs ]] && cd -- "${dirs[RANDOM%${#dirs[@]}]}"
+	cd -- "${dirs[RANDOM%${#dirs[@]}]}" || exit
 done
 pathToHideDestroyedFolder=$(pwd)
 for ((i=0; i <= $3; i++)); do
